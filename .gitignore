@@ -36,6 +36,19 @@ yarn-error.log*
 # vercel
 .vercel
 
+# MCP Playwright artifacts (screenshots, snapshots, console logs)
+/.playwright-mcp/
+/test-results/
+/playwright-report/
+
+# Local debug screenshots from MCP iterations
+/tindivo-*.png
+/tour-*.png
+/v*-mobile-*.png
+/v*-hero*.png
+/v*-payments*.png
+/v*-problem*.png
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

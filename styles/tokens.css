@@ -1,0 +1,121 @@
+@theme {
+  /* ===== Brand (1:1 con prototipo Tindivo) ===== */
+  --color-brand: #f97316;
+  --color-brand-hover: #ea580c;
+  --color-brand-deep: #c2410c;
+  --color-brand-soft: #ffedd5;
+  --color-brand-glow: #fbbf24;
+
+  /* ===== Ink / surface (light) ===== */
+  --color-ink: #1a1614;
+  --color-ink-soft: rgba(26, 22, 20, 0.7);
+  --color-ink-muted: rgba(26, 22, 20, 0.65);
+  --color-ink-faint: rgba(26, 22, 20, 0.06);
+  --color-surface: #faf6f1;
+  --color-stage: #eceae5;
+  --color-card: #ffffff;
+  --color-divider: rgba(26, 22, 20, 0.06);
+
+  /* ===== Tipografía ===== */
+  --font-display: var(--font-bricolage), -apple-system, system-ui, sans-serif;
+  --font-sans: var(--font-geist), -apple-system, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  /* ===== Radius brand ===== */
+  --radius-xl: 22px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+
+  /* ===== Easings brand ===== */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ===== Custom breakpoint ===== */
+  --breakpoint-xs: 28rem;
+
+  /* ===== Tailwind-callable animations ===== */
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-brand: pulse-brand 2s var(--ease-brand) infinite;
+  --animate-blink: blink 1s steps(2, start) infinite;
+}
+
+/* ===== Dark mode overrides ===== */
+.dark {
+  --color-ink: #f5f1ec;
+  --color-ink-soft: rgba(245, 241, 236, 0.78);
+  --color-ink-muted: rgba(245, 241, 236, 0.72);
+  --color-ink-faint: rgba(245, 241, 236, 0.08);
+  --color-surface: #15110f;
+  --color-stage: #0b0908;
+  --color-card: #1e1916;
+  --color-divider: rgba(245, 241, 236, 0.08);
+  /* brand naranja se mantiene en ambos modos */
+}
+
+/* ===== Viewport height fallback chain ===== */
+:root {
+  --vh-snap: 100vh;
+}
+@supports (height: 100svh) {
+  :root {
+    --vh-snap: 100svh;
+  }
+}
+
+/* ===== Custom utilities ===== */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-ink-soft);
+}
+
+@utility text-balance-tight {
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+@utility glass-card {
+  background: color-mix(in srgb, var(--color-card) 65%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--color-divider);
+}
+
+@utility brand-glow {
+  box-shadow: 0 0 60px -10px color-mix(in srgb, var(--color-brand) 40%, transparent);
+}
+
+@utility text-stroke {
+  -webkit-text-stroke: 1px var(--color-ink);
+  color: transparent;
+}
+
+/* ===== Focus visible global ===== */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background-color: var(--color-brand);
+  color: #ffffff;
+}
+
+/* ===== Reduced motion neutralizer ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
