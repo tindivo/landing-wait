@@ -8,7 +8,8 @@ export const BRAND = {
   tagline: "Una manera nueva de pedir lo que ya pedías siempre.",
   supportPhone: "+51 906 550 166",
   whatsappNumber: "51906550166",
-  instagram: "tindivo.pe",
+  facebookUrl:
+    "https://www.facebook.com/people/Tindivo/61580705042607/",
 } as const;
 
 export const WHATSAPP_MESSAGES = {
@@ -23,4 +24,4 @@ export function whatsappLink(message: keyof typeof WHATSAPP_MESSAGES): string {
   return `https://wa.me/${BRAND.whatsappNumber}?text=${text}`;
 }
 
-export const INSTAGRAM_URL = `https://instagram.com/${BRAND.instagram}`;
+export const FACEBOOK_URL = BRAND.facebookUrl;

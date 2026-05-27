@@ -8,13 +8,13 @@ import { SplitText } from "@/components/motion/SplitText";
 import { useViewportTimeline } from "@/lib/gsap/useViewportTimeline";
 import { gsap } from "@/lib/gsap/register";
 import { SECTIONS } from "@/lib/data/sections";
-import { BRAND, whatsappLink, INSTAGRAM_URL } from "@/lib/data/brand";
+import { BRAND, whatsappLink, FACEBOOK_URL } from "@/lib/data/brand";
 
 const META = SECTIONS[8]!;
 
 const LINKS = [
   { href: whatsappLink("general"), label: "→ Escríbenos por WhatsApp" },
-  { href: INSTAGRAM_URL, label: "→ Síguenos en Instagram" },
+  { href: FACEBOOK_URL, label: "→ Síguenos en Facebook" },
   { href: whatsappLink("vendor"), label: "→ Si tienes un restaurante, hablemos" },
 ];
 
