@@ -6,8 +6,8 @@ export const BRAND = {
   country: "Perú",
   launchYear: "2026",
   tagline: "Una manera nueva de pedir lo que ya pedías siempre.",
-  supportPhone: "+51987654321",
-  whatsappNumber: "51987654321",
+  supportPhone: "+51 906 550 166",
+  whatsappNumber: "51906550166",
   instagram: "tindivo.pe",
 } as const;
 

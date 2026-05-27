@@ -8,7 +8,7 @@ import { SplitText } from "@/components/motion/SplitText";
 import { useViewportTimeline } from "@/lib/gsap/useViewportTimeline";
 import { gsap } from "@/lib/gsap/register";
 import { SECTIONS } from "@/lib/data/sections";
-import { whatsappLink, INSTAGRAM_URL } from "@/lib/data/brand";
+import { BRAND, whatsappLink, INSTAGRAM_URL } from "@/lib/data/brand";
 
 const META = SECTIONS[8]!;
 
@@ -29,60 +29,81 @@ export function ClosingSection() {
   useViewportTimeline(
     ref,
     (tl) => {
-      if (headerRef.current) {
-        tl.from(
-          headerRef.current.querySelectorAll<HTMLElement>("[data-fade]"),
-          { opacity: 0, y: -10, duration: 0.7, ease: "expo.out", stagger: 0.1 },
+      // Defensive: force end-state visibility for all animated elements. If
+      // the timeline is killed before completion, items stay visible instead
+      // of trapped at opacity:0 from a tl.from "from" state.
+      const headerFades =
+        headerRef.current?.querySelectorAll<HTMLElement>("[data-fade]") ?? [];
+      const chars =
+        titleRef.current?.querySelectorAll<HTMLElement>(".split-part") ?? [];
+      const dot = titleRef.current?.querySelector<HTMLElement>("[data-dot]");
+      const linkEls =
+        linksRef.current?.querySelectorAll<HTMLElement>("[data-link]") ?? [];
+
+      gsap.set(headerFades, { opacity: 1, y: 0 });
+      if (chars.length > 0) {
+        gsap.set(chars, { transformOrigin: "50% 100%", opacity: 1, scale: 1 });
+      }
+      if (dot) gsap.set(dot, { opacity: 1, scale: 1 });
+      if (subRef.current) gsap.set(subRef.current, { opacity: 1, y: 0 });
+      linkEls.forEach((link) => {
+        gsap.set(link, { opacity: 1, x: 0 });
+      });
+      if (footerRef.current) gsap.set(footerRef.current, { opacity: 1, y: 0 });
+
+      if (headerFades.length > 0) {
+        tl.fromTo(
+          headerFades,
+          { opacity: 0, y: -10 },
+          { opacity: 1, y: 0, duration: 0.7, ease: "expo.out", stagger: 0.1, immediateRender: false },
           0,
         );
       }
 
-      const chars = titleRef.current?.querySelectorAll<HTMLElement>(".split-part") ?? [];
       if (chars.length > 0) {
-        gsap.set(chars, { transformOrigin: "50% 100%" });
-        tl.from(
+        tl.fromTo(
           chars,
+          { scale: 0, opacity: 0 },
           {
-            scale: 0,
-            opacity: 0,
+            scale: 1,
+            opacity: 1,
             duration: 0.7,
             ease: "back.out(2)",
             stagger: 0.06,
+            immediateRender: false,
           },
           0.2,
         );
       }
 
-      const dot = titleRef.current?.querySelector<HTMLElement>("[data-dot]");
       if (dot) {
-        tl.from(
+        tl.fromTo(
           dot,
+          { scale: 0, opacity: 0 },
           {
-            scale: 0,
-            opacity: 0,
+            scale: 1,
+            opacity: 1,
             duration: 0.55,
             ease: "back.out(2.4)",
+            immediateRender: false,
           },
           0.2 + chars.length * 0.06,
         );
       }
 
       if (subRef.current) {
-        tl.from(
+        tl.fromTo(
           subRef.current,
-          { opacity: 0, y: 16, duration: 0.7, ease: "expo.out" },
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.7, ease: "expo.out", immediateRender: false },
           1.1,
         );
       }
 
-      const links = linksRef.current?.querySelectorAll<HTMLElement>("[data-link]") ?? [];
-      links.forEach((link, i) => {
+      // CTAs always visible — animation only on underlines (decorative).
+      // Avoids the timeline-interruption bug that leaves links at opacity:0.
+      linkEls.forEach((link, i) => {
         const underline = link.querySelector<HTMLElement>("[data-underline]");
-        tl.from(
-          link,
-          { opacity: 0, x: -20, duration: 0.55, ease: "expo.out" },
-          1.4 + i * 0.18,
-        );
         if (underline) {
           gsap.set(underline, { scaleX: 0, transformOrigin: "left center" });
           tl.to(
@@ -94,9 +115,10 @@ export function ClosingSection() {
       });
 
       if (footerRef.current) {
-        tl.from(
+        tl.fromTo(
           footerRef.current,
-          { opacity: 0, y: 14, duration: 0.6, ease: "power2.out" },
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", immediateRender: false },
           2.4,
         );
       }
@@ -156,6 +178,13 @@ export function ClosingSection() {
           <p ref={subRef} className="max-w-xl text-base md:text-2xl text-white/90">
             Estamos puliendo los últimos detalles. Muy pronto en tindivo.com
             vas a poder pedir comida del barrio sin moverte.
+          </p>
+
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-white/85">
+            Escríbenos directo al WhatsApp{" "}
+            <span className="text-white font-semibold tracking-normal normal-case">
+              {BRAND.supportPhone}
+            </span>
           </p>
 
           <div
