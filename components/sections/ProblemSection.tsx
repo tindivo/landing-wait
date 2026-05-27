@@ -18,8 +18,8 @@ const LINES = [
 ];
 
 const CHAT = [
-  { time: "7:42 PM", text: "¿Aló, Priamo? ¿Está abierto?" },
-  { time: "7:58 PM", text: "¿Cuánto demora?" },
+  { time: "7:42 PM", text: "¿Aló, restaurante? ¿Su negocio está abierto?" },
+  { time: "7:58 PM", text: "¿Cuánto demora el pedido?" },
   { time: "8:23 PM", text: "¿Ya salió?" },
 ];
 

@@ -154,8 +154,8 @@ export function ClosingSection() {
             </span>
           </h2>
           <p ref={subRef} className="max-w-xl text-base md:text-2xl text-white/90">
-            Estamos puliendo los últimos detalles. La app llega a San Jacinto
-            este 2026.
+            Estamos puliendo los últimos detalles. Muy pronto en tindivo.com
+            vas a poder pedir comida del barrio sin moverte.
           </p>
 
           <div

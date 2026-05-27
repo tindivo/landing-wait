@@ -100,7 +100,7 @@ export function RestaurantsSection() {
             className="text-base md:text-xl text-[var(--color-ink-soft)] max-w-md"
           >
             Estamos cerrando los acuerdos con los mejores restaurantes de San
-            Jacinto. Muy pronto vas a poder pedir desde la app.
+            Jacinto. Muy pronto vas a poder pedir desde tindivo.com.
           </p>
         </div>
 
