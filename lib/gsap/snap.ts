@@ -115,13 +115,20 @@ export function setupSnap(
 type FullpageSnapOptions = {
   enabled?: boolean;
   lockMs?: number;
-  wheelThreshold?: number;
+  wheelAccumulatorThreshold?: number;
+  wheelResetMs?: number;
   touchThreshold?: number;
 };
 
 const DEFAULTS = {
   lockMs: 950,
-  wheelThreshold: 18,
+  // Accumulator threshold (px). Trackpads tick at 3–15px per wheel event;
+  // a mouse wheel fires ~100px in a single event. 30 captures both: 3–4 fast
+  // trackpad ticks accumulate past it, a single mouse wheel exceeds it instantly.
+  wheelAccumulatorThreshold: 30,
+  // If no wheel event arrives within this window, the accumulator resets —
+  // prevents stale deltas from triggering snap minutes later.
+  wheelResetMs: 150,
   touchThreshold: 48,
 };
 
@@ -136,7 +143,9 @@ export function useFullpageSnap(
   const isMobile = useIsMobile();
   const enabled = options?.enabled ?? true;
   const lockMs = options?.lockMs ?? DEFAULTS.lockMs;
-  const wheelThreshold = options?.wheelThreshold ?? DEFAULTS.wheelThreshold;
+  const wheelAccumulatorThreshold =
+    options?.wheelAccumulatorThreshold ?? DEFAULTS.wheelAccumulatorThreshold;
+  const wheelResetMs = options?.wheelResetMs ?? DEFAULTS.wheelResetMs;
   const touchThreshold = options?.touchThreshold ?? DEFAULTS.touchThreshold;
 
   useEffect(() => {
@@ -148,6 +157,19 @@ export function useFullpageSnap(
     let locked = false;
     let lockTimer: ReturnType<typeof setTimeout> | null = null;
     let touchStartY: number | null = null;
+
+    // Wheel accumulator: small trackpad deltas sum into a buffer until they
+    // cross the threshold. A single big mouse wheel also crosses instantly.
+    let wheelAccumulator = 0;
+    let wheelResetTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const resetAccumulator = () => {
+      wheelAccumulator = 0;
+      if (wheelResetTimer !== null) {
+        clearTimeout(wheelResetTimer);
+        wheelResetTimer = null;
+      }
+    };
 
     const acquireLock = () => {
       locked = true;
@@ -179,15 +201,23 @@ export function useFullpageSnap(
 
     const onWheel = (event: WheelEvent) => {
       if (isScrollableInside(event.target)) return;
-      const delta = event.deltaY;
-      if (Math.abs(delta) < wheelThreshold) return;
-      // Stop the event entirely so Lenis (its own wheel listener) doesn't
-      // double-process this delta and interrupt the in-flight scrollTo.
+      // Always preempt the event so Lenis (its own wheel listener) doesn't
+      // double-process this delta and fight the in-flight snap scroll.
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
       if (locked) return;
-      goTo(delta > 0 ? 1 : -1);
+
+      wheelAccumulator += event.deltaY;
+
+      if (wheelResetTimer !== null) clearTimeout(wheelResetTimer);
+      wheelResetTimer = setTimeout(resetAccumulator, wheelResetMs);
+
+      if (Math.abs(wheelAccumulator) >= wheelAccumulatorThreshold) {
+        const direction = wheelAccumulator > 0 ? 1 : -1;
+        resetAccumulator();
+        goTo(direction);
+      }
     };
 
     const onTouchStart = (event: TouchEvent) => {
@@ -215,6 +245,16 @@ export function useFullpageSnap(
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchend", onTouchEnd);
       if (lockTimer !== null) clearTimeout(lockTimer);
+      if (wheelResetTimer !== null) clearTimeout(wheelResetTimer);
     };
-  }, [lenis, enabled, reducedMotion, isMobile, lockMs, wheelThreshold, touchThreshold]);
+  }, [
+    lenis,
+    enabled,
+    reducedMotion,
+    isMobile,
+    lockMs,
+    wheelAccumulatorThreshold,
+    wheelResetMs,
+    touchThreshold,
+  ]);
 }
